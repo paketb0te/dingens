@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+	.loader {
+		display: none;
+		border: 4px solid #f3f3f3;
+		border-top: 4px solid #3498db;
+		border-radius: 50%;
+		width: 20px;
+		height: 20px;
+		animation: spin 2s linear infinite;
+		/* Safari */
+		-webkit-animation: spin 2s linear infinite;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+</style>
+
+<head>
+	<title>🥳</title>
+	<script>
+		function send() {
+			var image_style = document.getElementById("image_style").value;
+			var image_type = document.getElementById("image_type").value;
+
+			var result = document.getElementById("result");
+
+			const user_input = {
+				image_style: image_style,
+				image_type: image_type,
+			};
+
+			document.getElementById("generated_image").style.display = "none";
+			document.getElementById("spinner").style.display = "block";
+
+			fetch("/generate", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(user_input),
+			})
+				.then(response => response.blob())
+				.then(imageBlob => {
+					const imageObjectURL = URL.createObjectURL(imageBlob);
+					document.getElementById("generated_image").src = imageObjectURL;
+					document.getElementById("spinner").style.display = "none";
+					document.getElementById("generated_image").style.display = "block";
+				})
+		}
+	</script>
+</head>
+
+<body>
+	<h1>POST things to API 🥳</h1>
+
+	<input type="text" id="image_style" placeholder="Image Style" />
+	<input type="text" id="image_type" placeholder="Image Type" />
+	<button onclick="send()">Send</button>
+	<div>
+		<div class="loader" id="spinner"></div>
+		<img src="" id="generated_image">
+	</div>
+</body>
+
+</html>

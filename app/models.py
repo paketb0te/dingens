@@ -7,4 +7,4 @@ class UserInput(BaseModel):
 
 
 class GeneratedOutput(BaseModel):
-    asset: bytes
+    assets: list[str] = []

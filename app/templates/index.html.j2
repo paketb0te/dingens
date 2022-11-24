@@ -2,6 +2,10 @@
 <html>
 
 <style>
+	.asset {
+		border: 6px solid lightgray;
+	}
+
 	.loader {
 		display: none;
 		border: 4px solid #f3f3f3;
@@ -29,17 +33,13 @@
 	<title>🥳</title>
 	<script>
 		function send() {
-			var image_style = document.getElementById("image_style").value;
-			var image_type = document.getElementById("image_type").value;
-
-			var result = document.getElementById("result");
-
 			const user_input = {
-				image_style: image_style,
-				image_type: image_type,
+				image_style: document.getElementById("image_style").value,
+				image_type: document.getElementById("image_type").value,
 			};
 
-			document.getElementById("generated_image").style.display = "none";
+			document.getElementById("generated_assets").style.display = "none";
+			document.getElementById("generated_assets").replaceChildren();
 			document.getElementById("spinner").style.display = "block";
 
 			fetch("/generate", {
@@ -49,13 +49,17 @@
 				},
 				body: JSON.stringify(user_input),
 			})
-				.then(response => response.blob())
-				.then(imageBlob => {
-					const imageObjectURL = URL.createObjectURL(imageBlob);
-					document.getElementById("generated_image").src = imageObjectURL;
+				.then(response => response.json())
+				.then(array => {
+					array.forEach(element => {
+						var img = document.createElement("img");
+						img.src = element;
+						img.className = "asset"
+						document.getElementById("generated_assets").appendChild(img);
+					});
 					document.getElementById("spinner").style.display = "none";
-					document.getElementById("generated_image").style.display = "block";
-				})
+					document.getElementById("generated_assets").style.display = "block";
+		});
 		}
 	</script>
 </head>
@@ -63,12 +67,12 @@
 <body>
 	<h1>POST things to API 🥳</h1>
 
-	<input type="text" id="image_style" placeholder="Image Style" />
 	<input type="text" id="image_type" placeholder="Image Type" />
+	<input type="text" id="image_style" placeholder="Image Style" />
 	<button onclick="send()">Send</button>
 	<div>
 		<div class="loader" id="spinner"></div>
-		<img src="" id="generated_image">
+		<div id="generated_assets"></div>
 	</div>
 </body>
 

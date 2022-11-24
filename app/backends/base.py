@@ -1,8 +1,9 @@
-from typing import Protocol
+from typing import Protocol, runtime_checkable
 
 from models import GeneratedOutput, UserInput
 
 
+@runtime_checkable
 class GeneratingBackend(Protocol):
     """Protocol class for backends that can generate assets fro ma user input."""
 

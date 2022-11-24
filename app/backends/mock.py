@@ -1,10 +1,7 @@
 """Mock module returning a static asset"""
 import asyncio
-import io
-from pathlib import Path
 
 from models import GeneratedOutput, UserInput
-from PIL import Image
 
 
 class MockBackend:
@@ -22,11 +19,7 @@ class MockBackend:
 
         print("User input: ", user_input)
 
-        img = Image.open(fp=Path(__file__).parent / "mock_asset.png", mode="r")
-        img_byte_arr = io.BytesIO()
-        img.save(img_byte_arr, format="PNG")
-        img_bytes = img_byte_arr.getvalue()
+        mock_urls = ["/asset/mock_asset", "/asset/foo"]
 
-        await asyncio.sleep(2)
-
-        return GeneratedOutput(asset=img_bytes)
+        await asyncio.sleep(0.5)
+        return GeneratedOutput(assets=mock_urls)

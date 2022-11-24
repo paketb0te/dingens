@@ -1,8 +1,5 @@
-import asyncio
-from pathlib import Path
-
-from backends.mock import MockBackend
-from fastapi import FastAPI, Request, Response, status
+from config import app_config
+from fastapi import FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
 from models import UserInput
@@ -10,17 +7,15 @@ from models import UserInput
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-backend = MockBackend()
+backend = app_config.BACKEND
 
 
 @app.post(
     "/generate",
-    responses={status.HTTP_200_OK: {"content": {"image/png": {}}}},
-    response_class=Response,
 )
-async def generate(user_input: UserInput):
+async def generate_new(user_input: UserInput) -> list[str]:
     output = await backend.generate(user_input=user_input)
-    return Response(content=output.asset, media_type="image/png")
+    return output.assets
 
 
 @app.get("/")
@@ -31,8 +26,12 @@ async def root(request: Request):
     )
 
 
-@app.post("/img")
-async def img(user_input: UserInput):
-    print(user_input)
-    await asyncio.sleep(1)
-    return FileResponse(path=Path(__file__).parent / "backends" / "mock_asset.png")
+@app.get("/asset/{asset_id}")
+async def img(asset_id: str):
+    path = app_config.ASSET_DIR / f"{asset_id}.png"
+    if path.exists():
+        return FileResponse(path=app_config.ASSET_DIR / f"{asset_id}.png")
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="File not found"
+        )

@@ -8,17 +8,15 @@ import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 from models import GeneratedOutput, UserInput
 from PIL import Image
 
-STABILITY_HOST = "grpc.stability.ai:443"
-STABILITY_KEY = os.getenv("STABILITY_KEY")
-
-api = stability_sdk.client.StabilityInference(
-    host=STABILITY_HOST,
-    key=STABILITY_KEY or "",
-    verbose=True,
-)
-
 
 class DreamstudioBackend:
+
+    API = stability_sdk.client.StabilityInference(
+        host="grpc.stability.ai:443",
+        key=os.getenv("STABILITY_KEY", ""),
+        verbose=True,
+    )
+
     def __init__(self, asset_dir: Path) -> None:
         self.asset_dir = asset_dir
 
@@ -29,7 +27,7 @@ class DreamstudioBackend:
         prompt = self._transform_user_input(user_input=user_input)
 
         # Set up our initial generation parameters.
-        answers = api.generate(
+        answers = self.API.generate(
             prompt=prompt,
             seed=992446759,  # If a seed is provided, the resulting generated image will be deterministic.
             # What this means is that as long as all generation parameters remain the same, you can always recall the same image simply by generating it again.

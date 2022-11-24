@@ -16,10 +16,5 @@ class MockBackend:
         Returns:
             GeneratedOutput: Contains a static asset.
         """
-
-        print("User input: ", user_input)
-
-        mock_urls = ["/asset/mock_asset", "/asset/foo"]
-
         await asyncio.sleep(0.5)
-        return GeneratedOutput(assets=mock_urls)
+        return GeneratedOutput(assets=["/asset/mock_asset", "/asset/foo"])

@@ -14,15 +14,13 @@ from PIL import Image
 
 
 class DreamstudioBackend:
-
-    API = stability_sdk.client.StabilityInference(
-        host="grpc.stability.ai:443",
-        key=os.getenv("STABILITY_KEY", ""),
-        verbose=True,
-    )
-
     def __init__(self, asset_dir: Path) -> None:
         self.asset_dir = asset_dir
+        self.api = stability_sdk.client.StabilityInference(
+            host="grpc.stability.ai:443",
+            key=os.getenv("STABILITY_KEY", ""),
+            verbose=True,
+        )
 
     async def get_selection_elements(self) -> list[SelectionElement]:
         return [
@@ -54,7 +52,7 @@ class DreamstudioBackend:
         answers = await loop.run_in_executor(
             None,
             partial(
-                self.API.generate,
+                self.api.generate,
                 prompt=prompt,
                 seed=992446759,
                 steps=50,  # Step Count defaults to 50 if not specified here.

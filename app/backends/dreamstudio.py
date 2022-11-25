@@ -7,7 +7,7 @@ from pathlib import Path
 
 import stability_sdk.client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-from models import GeneratedOutput, UserInput
+from models import GeneratedOutput, SelectionElement, UserSelection
 from PIL import Image
 
 
@@ -22,11 +22,26 @@ class DreamstudioBackend:
     def __init__(self, asset_dir: Path) -> None:
         self.asset_dir = asset_dir
 
-    def _transform_user_input(self, user_input: UserInput) -> str:
-        return user_input.image_type + user_input.image_style
+    async def get_selection_elements(self) -> list[SelectionElement]:
+        return [
+            SelectionElement(
+                name="Content",
+                options=[
+                    "Detailed illustration of a fantasy fire and ice dragon, blizzard concept artists, magic the gathering",
+                    "Two men biking up a steep forest hill with a deep dark blue sweater and a wine red sweater.",
+                ],
+            ),
+            SelectionElement(
+                name="Style",
+                options=[
+                    "moebius, intricate, trending on artstation, deviantart, 8k, vibrant, high res",
+                    "Oil painting. Emotional. Trending on artstation. Steep. Nordic Trees. Rustic. Artistic.",
+                ],
+            ),
+        ]
 
-    async def generate(self, user_input: UserInput) -> GeneratedOutput:
-        prompt = self._transform_user_input(user_input=user_input)
+    async def generate(self, user_selections: list[UserSelection]) -> GeneratedOutput:
+        prompt = ", ".join(s.option for s in user_selections)
 
         # Get the asyncio event loop
         loop = asyncio.get_event_loop()

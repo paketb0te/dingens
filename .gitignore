@@ -1,5 +1,7 @@
 # Project specific
 app/assets/*
+!app/assets/Astronaut*
+!app/assets/Bear*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

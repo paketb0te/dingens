@@ -33,33 +33,37 @@
 	<title>🥳</title>
 	<script>
 		function send() {
-			const user_input = {
-				image_style: document.getElementById("image_style").value,
-				image_type: document.getElementById("image_type").value,
-			};
-
-			document.getElementById("generated_assets").style.display = "none";
-			document.getElementById("generated_assets").replaceChildren();
-			document.getElementById("spinner").style.display = "block";
-
-			fetch("/generate", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
+			const user_selections = [
+				{% for element in selection_elements %}
+		{
+			name: "{{ element.name }}",
+				option: document.getElementById("{{ element.name }}").value,
 				},
-				body: JSON.stringify(user_input),
-			})
-				.then(response => response.json())
-				.then(array => {
-					array.forEach(element => {
-						var img = document.createElement("img");
-						img.src = element;
-						img.className = "asset"
-						document.getElementById("generated_assets").appendChild(img);
-					});
-					document.getElementById("spinner").style.display = "none";
-					document.getElementById("generated_assets").style.display = "block";
-		});
+		{% endfor %}
+			];
+
+		document.getElementById("generated_assets").style.display = "none";
+		document.getElementById("generated_assets").replaceChildren();
+		document.getElementById("spinner").style.display = "block";
+
+		fetch("/generate", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(user_selections),
+		})
+			.then(response => response.json())
+			.then(array => {
+				array.forEach(element => {
+					var img = document.createElement("img");
+					img.src = element;
+					img.className = "asset"
+					document.getElementById("generated_assets").appendChild(img);
+				});
+				document.getElementById("spinner").style.display = "none";
+				document.getElementById("generated_assets").style.display = "block";
+			});
 		}
 	</script>
 </head>
@@ -67,8 +71,17 @@
 <body>
 	<h1>POST things to API 🥳</h1>
 
-	<input type="text" id="image_type" placeholder="Image Type" />
-	<input type="text" id="image_style" placeholder="Image Style" />
+	{% for element in selection_elements %}
+	<div>
+		<label for="{{ element.name }}">Choose {{ element.name }}:</label>
+		<select name="{{ element.name }}" id="{{ element.name }}">
+			{% for option in element.options %}
+			<option value="{{ option }}">{{ option }}</option>
+			{% endfor %}
+		</select>
+	</div>
+	{% endfor %}
+
 	<button onclick="send()">Send</button>
 	<div>
 		<div class="loader" id="spinner"></div>

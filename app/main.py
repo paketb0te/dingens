@@ -1,8 +1,8 @@
 from config import app_config
-from fastapi import FastAPI, HTTPException, Request, Response, status
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
-from models import UserInput
+from models import UserSelection
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -13,8 +13,8 @@ backend = app_config.BACKEND
 @app.post(
     "/generate",
 )
-async def generate_new(user_input: UserInput) -> list[str]:
-    output = await backend.generate(user_input=user_input)
+async def generate(user_selections: list[UserSelection]) -> list[str]:
+    output = await backend.generate(user_selections=user_selections)
     return output.assets
 
 
@@ -22,7 +22,10 @@ async def generate_new(user_input: UserInput) -> list[str]:
 async def root(request: Request):
     return templates.TemplateResponse(
         name="index.html.j2",
-        context={"request": request},
+        context={
+            "request": request,
+            "selection_elements": await backend.get_selection_elements(),
+        },
     )
 
 

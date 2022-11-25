@@ -1,3 +1,5 @@
+"""Backend to get assets from the dreamstudio API"""
+
 import asyncio
 import io
 import os
@@ -54,30 +56,29 @@ class DreamstudioBackend:
             partial(
                 self.API.generate,
                 prompt=prompt,
-                seed=992446759,  # If a seed is provided, the resulting generated image will be deterministic.
-                # What this means is that as long as all generation parameters remain the same, you can always recall the same image simply by generating it again.
-                # Note: This isn't quite the case for Clip Guided generations, which we'll tackle in a future example notebook.
+                seed=992446759,
                 steps=50,  # Step Count defaults to 50 if not specified here.
-                cfg_scale=8.0,  # Influences how strongly your generation is guided to match your prompt.
-                # Setting this value higher increases the strength in which it tries to match your prompt.
-                # Defaults to 7.0 if not specified.
-                width=512,  # Generation width, defaults to 512 if not included.
-                height=512,  # Generation height, defaults to 512 if not included.
-                samples=1,  # Number of images to generate, defaults to 1 if not included.
-                sampler=generation.SAMPLER_K_DPM_2_ANCESTRAL  # Choose which sampler we want to denoise our generation with.
-                # Defaults to k_lms if not specified. Clip Guidance only supports ancestral samplers.
-                # (Available Samplers: ddim, plms, k_euler, k_euler_ancestral, k_heun, k_dpm_2, k_dpm_2_ancestral, k_lms)
+                cfg_scale=8.0,
+                width=512,
+                height=512,
+                samples=1,
+                sampler=generation.SAMPLER_K_DPM_2_ANCESTRAL
+                # Choose which sampler we want to denoise our generation with.
+                # Defaults to k_lms if not specified.
+                # Clip Guidance only supports ancestral samplers.
             ),
         )
 
+        # Save the received images and create corresponding URLs
+        # so that they can be served by the get_asset() function
         asset_urls = []
-
         for resp in answers:
             for artifact in resp.artifacts:  # type: ignore
-                if artifact.type == generation.ARTIFACT_IMAGE:
-                    img = Image.open(io.BytesIO(artifact.binary))
-                    unique_id = uuid.uuid4()
-                    img.save(self.asset_dir / f"{unique_id}.png", format="PNG")
-                    asset_urls.append(f"/asset/{unique_id}")
+                if artifact.type != generation.ARTIFACT_IMAGE:
+                    continue
+                img = Image.open(io.BytesIO(artifact.binary))
+                unique_id = uuid.uuid4()
+                img.save(self.asset_dir / f"{unique_id}.png", format="PNG")
+                asset_urls.append(f"/asset/{unique_id}")
 
         return GeneratedOutput(assets=asset_urls)

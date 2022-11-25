@@ -1,3 +1,5 @@
+"""Contains the base Protocol class for backends"""
+
 from typing import Protocol, runtime_checkable
 
 from models import GeneratedOutput, SelectionElement, UserSelection

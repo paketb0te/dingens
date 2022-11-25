@@ -1,3 +1,5 @@
+"""FastAPI app taking user input to get assets from a backend."""
+
 from config import app_config
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
@@ -30,11 +32,10 @@ async def root(request: Request):
 
 
 @app.get("/asset/{asset_id}")
-async def img(asset_id: str):
+async def get_asset(asset_id: str):
     path = app_config.ASSET_DIR / f"{asset_id}.png"
-    if path.exists():
-        return FileResponse(path=app_config.ASSET_DIR / f"{asset_id}.png")
-    else:
+    if not path.exists():
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="File not found"
         )
+    return FileResponse(path=app_config.ASSET_DIR / f"{asset_id}.png")

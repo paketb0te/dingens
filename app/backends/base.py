@@ -7,7 +7,7 @@ from models import GeneratedOutput, SelectionElement, UserSelection
 
 @runtime_checkable
 class GeneratingBackend(Protocol):
-    """Protocol class for backends that can generate assets fro ma user input."""
+    """Protocol class for backends that can generate assets from a user input."""
 
     async def generate(self, user_selections: list[UserSelection]) -> GeneratedOutput:
         """Generate an asset from user input.

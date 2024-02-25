@@ -1,13 +1,18 @@
 """FastAPI app taking user input to get assets from a backend."""
 
-from config import app_config
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
-from models import UserSelection
+
+from dingens.config import app_config
+from dingens.models import UserSelection
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
+
+template_dir = Path(__file__).parent / "templates"
+templates = Jinja2Templates(directory=template_dir)
 
 backend = app_config.BACKEND
 

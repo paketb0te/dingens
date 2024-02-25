@@ -2,7 +2,7 @@
 
 from typing import Protocol, runtime_checkable
 
-from models import GeneratedOutput, SelectionElement, UserSelection
+from dingens.models import GeneratedOutput, SelectionElement, UserSelection
 
 
 @runtime_checkable

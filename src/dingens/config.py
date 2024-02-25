@@ -3,9 +3,9 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from backends.base import GeneratingBackend
-from backends.dreamstudio import DreamstudioBackend
-from backends.mock import MockBackend
+from dingens.backends.base import GeneratingBackend
+from dingens.backends.dreamstudio import DreamstudioBackend
+from dingens.backends.mock import MockBackend
 
 
 @dataclass

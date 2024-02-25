@@ -1,7 +1,8 @@
 """Mock module returning a static asset"""
+
 import asyncio
 
-from models import GeneratedOutput, SelectionElement, UserSelection
+from dingens.models import GeneratedOutput, SelectionElement, UserSelection
 
 
 class MockBackend:

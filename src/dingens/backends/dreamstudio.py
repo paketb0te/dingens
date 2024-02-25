@@ -9,7 +9,7 @@ from pathlib import Path
 
 import stability_sdk.client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
-from models import GeneratedOutput, SelectionElement, UserSelection
+from dingens.models import GeneratedOutput, SelectionElement, UserSelection
 from PIL import Image
 
 
@@ -60,7 +60,7 @@ class DreamstudioBackend:
                 width=512,
                 height=512,
                 samples=1,
-                sampler=generation.SAMPLER_K_DPM_2_ANCESTRAL
+                sampler=generation.SAMPLER_K_DPM_2_ANCESTRAL,
                 # Choose which sampler we want to denoise our generation with.
                 # Defaults to k_lms if not specified.
                 # Clip Guidance only supports ancestral samplers.

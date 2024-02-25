@@ -31,10 +31,9 @@ poetry install
 
 Now you have a virtualenv which you can easily activate / deactivate with `poetry shell` / `exit`.
 
-If you want ro run the app locally for testing, change into the `app` directory and start uvicorn:
+If you want ro run the app locally for testing, start uvicorn like so:
 
 ```bash
-cd app
 uvicorn main:app --reload
 ```
 
